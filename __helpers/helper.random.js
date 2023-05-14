@@ -1,17 +1,17 @@
-const randomstring = require("randomstring");
-const dotenv = require('dotenv');
-const generator = require('generate-password');
+import randomstring from "randomstring";
+import dotenv from 'dotenv';
+import generator from 'generate-password';
 
 dotenv.config();
 
-const generateIdentifier = ({ prefix }) => {
+export const generateIdentifier = ({ prefix }) => {
     const pfx = Math.floor(Math.random() * 1000);
     const sfx = Math.floor(Math.random() * 100);
     
     return `${prefix ? prefix : "REF"}-${pfx}-${sfx}`;
 };
 
-const generateSecuredPassword = ({ length }) => {
+export const generateSecuredPassword = ({ length }) => {
     var password = generator.generate({
         length,
         numbers: true,
@@ -23,12 +23,12 @@ const generateSecuredPassword = ({ length }) => {
     return password
 };
 
-const generateFilename = ({ prefix, tempname }) => {
+export const generateFilename = ({ prefix, tempname }) => {
     const extension = tempname.substring(tempname.lastIndexOf("."));
     return `${prefix ? prefix : ""}${randomstring.generate()}${extension}`;
 };
 
-const randomLongNumber = ({ length }) => {
+export const randomLongNumber = ({ length }) => {
     const len = length && !isNaN(parseInt(length)) ? length : 6;
     const ret = [];
 
@@ -41,7 +41,7 @@ const randomLongNumber = ({ length }) => {
     return m.trim();
 };
 
-const returnDayOfTheWeekFromNumber = ({ dayNumber }) => {
+export const returnDayOfTheWeekFromNumber = ({ dayNumber }) => {
     switch (parseInt(dayNumber)) {
         case 0:
             return "Lundi";
@@ -69,11 +69,3 @@ const returnDayOfTheWeekFromNumber = ({ dayNumber }) => {
             break;
     }
 };
-
-module.exports = {
-    returnDayOfTheWeekFromNumber,
-    randomLongNumber,
-    generateSecuredPassword,
-    generateFilename,
-    generateIdentifier
-}

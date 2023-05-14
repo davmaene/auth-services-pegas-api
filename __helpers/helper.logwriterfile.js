@@ -1,27 +1,32 @@
-const fs = require('fs');
-const dotenv = require('dotenv');
+import fs from 'fs';
+import dotenv from 'dotenv';
+import { momentNow } from './helper.moment.js';
 
 dotenv.config()
 
-const loggerSync = ({ message, raison, model }) => {
-    const fl = fs.createWriteStream('assets/assetsLOGS/log.chash.server.ini', {
+export const loggerSystemAction = ({ message, title, data }) => {
+    const fl = fs.createWriteStream('__assets/__log/log.system.annyaction.ini', {
         flags: 'a' // 'a' means appending (old data will be preserved)
     })
-    fl.write(`\n Model => ${model}\n Record => ${message}\n Raison => ${raison}\n Temps => ${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`);
+    fl.write(`\nTitle => ${title}\nMessage => ${message}\nData => ${data}\nDate => ${momentNow()}`);
     fl.write(`\n--------------------------------------------------------------------`);
     fl.close()
 };
 
-const loggerSystem = ({ message, title }) => {
-    const fl = fs.createWriteStream('assets/assetsFICHES/log.system.infos.ini', {
+export const loggerSystemCrached = ({ message, title }) => {
+    const fl = fs.createWriteStream('__assets/__log/log.system.crached.ini', {
         flags: 'a' // 'a' means appending (old data will be preserved)
     })
-    fl.write(`\n Title => ${title}\n Info => ${message}\n Temps => ${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`);
+    fl.write(`\nTitle => ${title}\n Info => ${message}\n Date => ${momentNow()}`);
     fl.write(`\n--------------------------------------------------------------------`);
     fl.close()
 };
 
-module.exports = {
-    loggerSync,
-    loggerSystem
+export const loggerSystemStarted = () => {
+    const fl = fs.createWriteStream('__assets/__log/log.system.started.ini', {
+        flags: 'a' // 'a' means appending (old data will be preserved)
+    })
+    fl.write(`\nTitle => System Started\n Info => The System was successfuly started\n Date => ${momentNow()}`);
+    fl.write(`\n--------------------------------------------------------------------`);
+    fl.close()
 };
