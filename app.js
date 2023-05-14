@@ -2,10 +2,13 @@ import express from "express";
 import dotenv from 'dotenv';
 import { Response } from "./__helpers/helper.serverresponse.js";
 import { loggerSystemAction, loggerSystemStarted } from "./__helpers/helper.logwriterfile.js";
+import { __routes } from "./__routes/index.js";
 dotenv.config();
 
 const PORT = process.env.PORT || 4300;
 const pegasWEBService = express();
+
+pegasWEBService.use(__routes)
 
 pegasWEBService.use((req, res, next) => {
     loggerSystemAction({
