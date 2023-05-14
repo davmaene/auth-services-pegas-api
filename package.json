@@ -1,6 +1,7 @@
 {
   "name": "package.json",
   "version": "1.0.1",
+  "type": "module",
   "description": "Simple service web for authentification ",
   "main": "app.js",
   "scripts": {
@@ -22,5 +23,18 @@
   "bugs": {
     "url": "https://github.com/davmaene/auth-services-pegas-api/issues"
   },
-  "homepage": "https://github.com/davmaene/auth-services-pegas-api#readme"
+  "homepage": "https://github.com/davmaene/auth-services-pegas-api#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-rate-limit": "^6.7.0",
+    "moment": "^2.29.4",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.3.1",
+    "sequelize": "^6.31.1",
+    "sharp": "^0.32.1",
+    "uuid": "^9.0.0"
+  }
 }
