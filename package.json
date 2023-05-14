@@ -1,0 +1,26 @@
+{
+  "name": "package.json",
+  "version": "1.0.1",
+  "description": "Simple service web for authentification ",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/davmaene/auth-services-pegas-api.git"
+  },
+  "keywords": [
+    "auth",
+    "authentification",
+    "webService",
+    "API"
+  ],
+  "author": "davmaene",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/davmaene/auth-services-pegas-api/issues"
+  },
+  "homepage": "https://github.com/davmaene/auth-services-pegas-api#readme"
+}
