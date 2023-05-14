@@ -28,7 +28,12 @@ export const __Extrasinfos = Configs.define('__tbl_pegas_cridentials', {
         allowNull: false,
         defaultValue: process.env.APPESCAPESTRING
     },
-    token: {
+    stateprovince: {
+        type: Sequelize.TEXT,
+        allowNull: false,
+        defaultValue: process.env.APPESCAPESTRING
+    },
+    city: {
         type: Sequelize.TEXT,
         allowNull: false,
         defaultValue: process.env.APPESCAPESTRING
