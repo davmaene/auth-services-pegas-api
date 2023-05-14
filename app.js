@@ -8,7 +8,7 @@ dotenv.config();
 const PORT = process.env.PORT || 4300;
 const pegasWEBService = express();
 
-pegasWEBService.use(__routes)
+pegasWEBService.use("/api", __routes)
 
 pegasWEBService.use((req, res, next) => {
     loggerSystemAction({
