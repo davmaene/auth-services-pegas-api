@@ -3,12 +3,22 @@ import dotenv from 'dotenv';
 import { Response } from "./__helpers/helper.serverresponse.js";
 import { loggerSystemAction, loggerSystemStarted } from "./__helpers/helper.logwriterfile.js";
 import { __routes } from "./__routes/index.js";
+import cors from 'cors';
+import fileUpload from "express-fileupload";
+import cookieParser from "cookie-parser";
+
 dotenv.config();
 
 const PORT = process.env.PORT || 4300;
 const pegasWEBService = express();
 
-pegasWEBService.use("/api", __routes)
+pegasWEBService.use(cors())
+pegasWEBService.use(fileUpload({ limits: { fileSize: 50 * 1024 * 1024 }}));
+pegasWEBService.use(express.json({ limit: '50mb' }));
+pegasWEBService.use(cookieParser(process.env.APPCOOKIESNAME));
+pegasWEBService.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+pegasWEBService.use("/api", __routes);
 
 pegasWEBService.use((req, res, next) => {
     loggerSystemAction({

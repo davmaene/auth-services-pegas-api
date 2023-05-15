@@ -1,4 +1,4 @@
-const fillphone = ({ phone }) => {
+export const fillphone = ({ phone }) => {
     
     switch (phone.charAt(0)) {
         case 0: return String(phone);
@@ -7,8 +7,4 @@ const fillphone = ({ phone }) => {
         case 2: return String(`0${phone.substring(3)}`);
         default: return String(`0${phone}`);
     }
-}
-
-module.exports = {
-    fillphone
 }
