@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from 'dotenv';
 import { Response } from "./__helpers/helper.serverresponse.js";
-import { loggerSystemAction, loggerSystemStarted } from "./__helpers/helper.logwriterfile.js";
+import { loggerSystemAction, loggerSystemCrached, loggerSystemStarted } from "./__helpers/helper.logwriterfile.js";
 import { __routes } from "./__routes/index.js";
 import cors from 'cors';
 import fileUpload from "express-fileupload";
@@ -48,11 +48,19 @@ pegasWEBService.listen(PORT ,() => {
     console.log('====================================');
     console.log("app is running on " + PORT);
     console.log('====================================');
-    try {
-        Configs.authenticate();
-    } catch (error) {
-        console.log('====================================');
-        console.log("Unable to connect to DB " + error);
-        console.log('====================================');
-    }
+    Configs.authenticate()
+    .then(C => {
+        loggerSystemAction({
+            message: "Connexion to success",
+            data: JSON.stringify({}),
+            title: "Connexion to DB done"
+        })
+    })
+    .catch(err => {
+        loggerSystemCrached({ 
+            message: err.toString(),
+            title: "Error connexion to DB"
+        })
+        console.log(" Error Connexion to DB ");
+    })
 })
