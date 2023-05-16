@@ -7,7 +7,7 @@ import { nullUuid } from '../__helpers/helper.uuid.js';
 
 dotenv.config()
 
-export const __Extrasinfos = Configs.define('__tbl_pegas_cridentials', {
+export const __Extrasinfos = Configs.define('__tbl_pegas_extrasinfos', {
     uuid: {
         type: Sequelize.STRING,
         allowNull: false,

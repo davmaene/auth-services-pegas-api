@@ -36,11 +36,6 @@ export const __User = Configs.define('__tbl_pegas_users', {
         allowNull: false,
         defaultValue: 1
     },
-    lastlogin: {
-        type: Sequelize.STRING,
-        allowNull: true,
-        defaultValue: process.env.APPESCAPESTRING
-    },
     createdoninunix:{
         type: Sequelize.STRING,
         allowNull: true,
