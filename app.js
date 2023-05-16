@@ -6,6 +6,7 @@ import { __routes } from "./__routes/index.js";
 import cors from 'cors';
 import fileUpload from "express-fileupload";
 import cookieParser from "cookie-parser";
+import { Configs } from "./__configs/configs.config.js";
 
 dotenv.config();
 
@@ -47,4 +48,11 @@ pegasWEBService.listen(PORT ,() => {
     console.log('====================================');
     console.log("app is running on " + PORT);
     console.log('====================================');
+    try {
+        Configs.authenticate();
+    } catch (error) {
+        console.log('====================================');
+        console.log("Unable to connect to DB " + error);
+        console.log('====================================');
+    }
 })

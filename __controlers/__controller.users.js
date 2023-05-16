@@ -1,5 +1,6 @@
 import { UserSchemaValidator } from "../__helpers/helper.datavalidator.js"
 import { Response } from "../__helpers/helper.serverresponse.js"
+import { Service } from "../__services/service.traitement.js";
 
 export const controllerUser = {
     onSignin: async (req, res, next) => {
@@ -8,11 +9,17 @@ export const controllerUser = {
                 if(error){
                     return Response({ res, status: 401, body: "This request must have at least username and password " })
                 }else{
-                    
+                    Service.onLogin({ 
+                        input: { username, password }, 
+                        callBack: (output) => {
+                            console.log('====================================');
+                            console.log(output);
+                            console.log('====================================');
+                        }
+                    })
                 }
             } 
         })
-        return Response({ res, status: 200, body: {} })
     },
 
     onSignup: async (req, res, next) => {

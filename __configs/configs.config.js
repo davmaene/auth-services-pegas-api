@@ -9,7 +9,7 @@ export const Configs = new Sequelize(
     process.env.APPDBPASSWORD
     ,{
         port: process.env.APPDBPORT,
-        host: process.env.APPDBHOST,
+        host: process.env.APPDBHOSTNAME,
         dialect: process.env.APPDBDIALECT || "mysql"
     }
 );
