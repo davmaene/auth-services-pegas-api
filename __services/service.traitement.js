@@ -7,7 +7,7 @@ import { fillphone } from "../__helpers/helper.fillphonenumber.js";
 import { loggerSystemCrached } from "../__helpers/helper.logwriterfile.js";
 
 export const Service = {
-    onLogin: async ({input, callBack}) => {
+    onLogin: async ({ input, callBack }) => {
         const { username, password } = input;
         try {
             __User.findOne({
@@ -48,7 +48,9 @@ export const Service = {
         }
     },
 
-    onRegister: async (input) => {
-
+    onRegister: async ({ input, callBack }) => {
+        if(input && callBack){
+            callBack(this)
+        }
     }
 }

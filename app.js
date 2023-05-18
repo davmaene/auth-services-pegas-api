@@ -61,6 +61,7 @@ pegasWEBService.listen(PORT ,() => {
             message: err.toString(),
             title: "Error connexion to DB"
         })
-        console.log(" Error Connexion to DB ");
+        console.log("Error Connexion to DB ", `===> Sorry we occured an error when trying to connect '${process.env.APPDBNAME}'`);
+        console.log(err);
     })
 })

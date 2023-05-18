@@ -11,11 +11,7 @@ export const controllerUser = {
                 }else{
                     Service.onLogin({ 
                         input: { username, password }, 
-                        callBack: (output) => {
-                            console.log('====================================');
-                            console.log(output);
-                            console.log('====================================');
-                        }
+                        callBack: (output) => Response({ res, ...output })
                     })
                 }
             } 
@@ -23,6 +19,12 @@ export const controllerUser = {
     },
 
     onSignup: async (req, res, next) => {
-
+        const { phone, email } = req.body;
+        Service.onRegister({
+            input: { phone },
+            callBack: (output) => {
+                console.log("Output is ==> ", output);
+            }
+        })
     }
 }
