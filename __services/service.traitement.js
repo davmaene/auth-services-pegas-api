@@ -50,7 +50,7 @@ export const Service = {
 
     onRegister: async ({ input, callBack }) => {
         if(input && callBack){
-            callBack(this)
+            callBack()
         }
     }
 }
