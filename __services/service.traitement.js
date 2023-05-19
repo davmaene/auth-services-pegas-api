@@ -5,6 +5,7 @@ import { tokenGenerate } from "../__ware/ware.session.js";
 import { comparePWD } from "../__helpers/helper.password.js";
 import { fillphone } from "../__helpers/helper.fillphonenumber.js";
 import { loggerSystemCrached } from "../__helpers/helper.logwriterfile.js";
+import { Checker } from "../__ware/ware.userchecker.js";
 
 export const Service = {
     onLogin: async ({ input, callBack }) => {
@@ -50,7 +51,34 @@ export const Service = {
 
     onRegister: async ({ input, callBack }) => {
         if(input && callBack){
-            callBack()
+            Checker.checkIfUserExist({ 
+                key: 'phone',
+                value: input['phone'],
+                callBack: ({ rejected, resolved }) => {
+                    if(rejected){
+                        callBack({ rejected: true, resolved: undefined })
+                    }else{
+                        const { code } = resolved;
+                        if(code === 200){
+                            __User.create({
+                                phone: fillphone({ phone: input['phone'] })
+                            })
+                            .then(_user => {
+                                if(_user instanceof __User){
+                                    
+                                }else{
+                                    callBack({ rejected: true, resolved: undefined })
+                                }
+                            })
+                            .catch(err => {
+                                callBack({ rejected: err, resolved: undefined })
+                            })
+                        }else{
+                            callBack({ rejected: undefined, resolved: { resolved, rejected } })
+                        }
+                    }
+                }
+            })
         }
     }
 }

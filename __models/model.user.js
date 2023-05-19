@@ -15,17 +15,18 @@ export const __User = Configs.define('__tbl_pegas_users', {
     },
     fsname: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
         defaultValue: process.env.APPESCAPESTRING
     },
     lsname: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
         defaultValue: process.env.APPESCAPESTRING
     },
     email: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true,
+        defaultValue: process.env.APPESCAPESTRING
     },
     phone: {
         type: Sequelize.STRING,
