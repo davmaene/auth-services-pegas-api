@@ -12,6 +12,7 @@ import { hashPWD } from "../__helpers/helper.password.js";
 import { momentNow } from "../__helpers/helper.moment.js";
 
 export const Service = {
+
     onLogin: async ({ input, callBack }) => {
         const { phone, password } = input;
         try {
@@ -100,7 +101,7 @@ export const Service = {
                                 callBack(ResponseInterne({ status: 500, body: err }))
                             })
                         }else{
-                            callBack(ResponseInterne({ status: 500, body: "Error occured" }))
+                            callBack(ResponseInterne({ status: code, body: "Error occured" }))
                         }
                     }
                 }
