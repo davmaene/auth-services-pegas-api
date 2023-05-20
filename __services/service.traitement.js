@@ -9,13 +9,13 @@ import { Checker } from "../__ware/ware.userchecker.js";
 
 export const Service = {
     onLogin: async ({ input, callBack }) => {
-        const { username, password } = input;
+        const { phone, password } = input;
         try {
             __User.findOne({
                 where: {
                     [Op.or]: [
-                        { phone: fillphone({ phone: username }) },
-                        { email: username.toString().toLowerCase() }
+                        { phone: fillphone({ phone }) },
+                        { email: phone.toString().toLowerCase() }
                     ]
                 }
             })
@@ -25,7 +25,7 @@ export const Service = {
                         if(done){
                             const { verified } = _user.toJSON();
                             if(verified === 1){
-                                tokenGenerate({ data: _user && _user['email'] }, (err, done) => {
+                                tokenGenerate({ data: _user && _user['phone'] }, (err, done) => {
                                     if(done){
                                         return callBack(ResponseInterne({ status: 200, body: { ..._user.toJSON(), token: done } }))
                                     }else{
@@ -65,7 +65,13 @@ export const Service = {
                             })
                             .then(_user => {
                                 if(_user instanceof __User){
-                                    
+                                    tokenGenerate({ data: _user && _user['phone'] }, (err, done) => {
+                                        if(done){
+                                            return callBack(ResponseInterne({ status: 200, body: { ..._user.toJSON(), token: done } }))
+                                        }else{
+                                            return callBack(ResponseInterne({ status: 400, body: {} }))
+                                        }
+                                    })
                                 }else{
                                     callBack({ rejected: true, resolved: undefined })
                                 }

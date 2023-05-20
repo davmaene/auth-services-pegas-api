@@ -5,13 +5,13 @@ import { Service } from "../__services/service.traitement.js";
 export const controllerUser = {
     
     onSignin: async (req, res, next) => {
-        const { username, password } = req.body;
+        const { phone, password } = req.body;
         UserSchemaValidator({ object: { ...req.body }, cb: ({ value, error }) => {
                 if(error){
                     return Response({ res, status: 401, body: "This request must have at least username and password !" })
                 }else{
                     Service.onLogin({ 
-                        input: { username, password }, 
+                        input: { phone, password }, 
                         callBack: (output) => Response({ res, ...output })
                     })
                 }
@@ -25,7 +25,7 @@ export const controllerUser = {
         Service.onRegister({
             input: { phone },
             callBack: (output) => {
-                console.log("Output is ==> ", output);
+                return Response({ res, ...output })
             }
         })
     }

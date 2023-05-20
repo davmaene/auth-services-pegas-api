@@ -7,7 +7,7 @@ export const ResponseInterne = ({ status, body }) => {
             return({
                 status: 200,
                 message: "Success execution",
-                data: body ? body : {}
+                body: body ? body : {}
             });
             break;
 
@@ -15,7 +15,7 @@ export const ResponseInterne = ({ status, body }) => {
             return({
                 status: 402,
                 message: "Account not activate !",
-                data: body ? body : {}
+                body: body ? body : {}
             });
             break;
 
@@ -23,7 +23,7 @@ export const ResponseInterne = ({ status, body }) => {
             return({
                 status: 203,
                 message: "Login failed `password` or `username` is incorrect !",
-                data: body ? body : {}
+                body: body ? body : {}
             });
             break;
 
@@ -31,7 +31,7 @@ export const ResponseInterne = ({ status, body }) => {
             return({
                 status: 244,
                 message: "Login failed cause account is not activate",
-                data: body ? body : {}
+                body: body ? body : {}
             });
             break;
 
@@ -39,7 +39,7 @@ export const ResponseInterne = ({ status, body }) => {
             return({
                 status: 404,
                 message: "Ressource not found on this server !",
-                data: body ? body : {}
+                body: body ? body : {}
             });
             break;
 
@@ -47,7 +47,7 @@ export const ResponseInterne = ({ status, body }) => {
             return({
                 status: 403,
                 message: "You don't have right access to this server ! please check your app and access key",
-                data: body ? body : {}
+                body: body ? body : {}
             })
             break;
 
@@ -55,7 +55,7 @@ export const ResponseInterne = ({ status, body }) => {
             return({
                 status: 400,
                 message: "Success execution but nothing to render",
-                data: body ? body : {}
+                body: body ? body : {}
             })
             break;
 
@@ -63,7 +63,7 @@ export const ResponseInterne = ({ status, body }) => {
             return({
                 status: 401,
                 message: "missing params to the request !",
-                data: body ? body : {}
+                body: body ? body : {}
             });
             break;
 
@@ -71,7 +71,7 @@ export const ResponseInterne = ({ status, body }) => {
             return({
                 status: 402,
                 message: "Session has expired !",
-                data: body ? body : {}
+                body: body ? body : {}
             });
             break;
 
@@ -79,7 +79,7 @@ export const ResponseInterne = ({ status, body }) => {
             return({
                 status: 503,
                 message: "SQL Error in executing request !",
-                data: body ? body : {}
+                body: body ? body : {}
             })
             break;
 
@@ -87,7 +87,7 @@ export const ResponseInterne = ({ status, body }) => {
             return({
                 status: 203,
                 message: "No enougth cash for payement !",
-                data: body ? body : {}
+                body: body ? body : {}
             })
             break;
 
@@ -95,7 +95,7 @@ export const ResponseInterne = ({ status, body }) => {
             return({
                 status: 500,
                 message: "An internal server error occured !",
-                data: body ? body : {}
+                body: body ? body : {}
             })
             break;
             
@@ -103,7 +103,7 @@ export const ResponseInterne = ({ status, body }) => {
             return({
                 status: 222,
                 message: "unknown internal server occured on this server | please contact + 243 970 284 772 if the problem persists",
-                data: []
+                body: []
             })
             break;
         }
@@ -111,7 +111,7 @@ export const ResponseInterne = ({ status, body }) => {
         return({
             status: 222,
             message: "missing params to the request ",
-            data: "case where missing `res` or `status` object in switch case"
+            body: "case where missing `res` or `status` object in switch case"
         });
     }
 };

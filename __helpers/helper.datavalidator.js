@@ -65,7 +65,7 @@ export const convertStringIntoArray = ({ chaine }) => {
 
 export const UserSchemaValidator = ({object, cb}) => {
     const User = Joi.object({
-        username: Joi.string()
+        phone: Joi.string()
         .alphanum()
         .min(3)
         .max(30)
