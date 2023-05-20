@@ -23,10 +23,8 @@ export const controllerUser = {
         const { phone, password, email } = req.body;
         if(!phone || !password) return Response({ res, status: 401, body: "This request must have at leats phone number or email !" })
         Service.onRegister({
-            input: { phone },
-            callBack: (output) => {
-                return Response({ res, ...output })
-            }
+            input: { phone, password },
+            callBack: (output) => Response({ res, ...output })
         })
     }
 }

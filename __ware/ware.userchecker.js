@@ -10,9 +10,9 @@ export const Checker = {
             })
             .then(user_ => {
                 if(user_ instanceof __User){
-                    callBack({ rejected: undefined, resolved: { code: 200, message:  "This user was not foound on this server", data: user_} })
+                    callBack({ rejected: undefined, resolved: { code: 400, message:  "This user still exist in this server ", data: user_} })
                 }else{
-                    callBack({ rejected: undefined, resolved: { code: 404, message: "This user was not found on this server", data: {} } })
+                    callBack({ rejected: undefined, resolved: { code: 200, message: "This user was not found on this server", data: {} } })
                 }
             })
             .catch(err => {

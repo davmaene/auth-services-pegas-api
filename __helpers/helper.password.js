@@ -4,7 +4,11 @@ import dotenv from 'dotenv';
 dotenv.config()
 
 export const hashPWD = async ({ plaintext }, cb) => {
-    return bcrypt.hash(plaintext, 10);
+    try {
+        return bcrypt.hash(plaintext, 10);
+    } catch (error) {
+        return false
+    }
 }
 
 export const comparePWD = async ({ plaintext, hashedtext }, cb) => {

@@ -6,6 +6,10 @@ import { comparePWD } from "../__helpers/helper.password.js";
 import { fillphone } from "../__helpers/helper.fillphonenumber.js";
 import { loggerSystemCrached } from "../__helpers/helper.logwriterfile.js";
 import { Checker } from "../__ware/ware.userchecker.js";
+import { __Extrasinfos } from "../__models/mode.extrasinfos.js";
+import { __Cridentials } from "../__models/model.cridentials.js";
+import { hashPWD } from "../__helpers/helper.password.js";
+import { momentNow } from "../__helpers/helper.moment.js";
 
 export const Service = {
     onLogin: async ({ input, callBack }) => {
@@ -51,9 +55,11 @@ export const Service = {
 
     onRegister: async ({ input, callBack }) => {
         if(input && callBack){
+            const { phone, password } = input;
+            const pwd = await hashPWD({ plaintext: password });
             Checker.checkIfUserExist({ 
                 key: 'phone',
-                value: input['phone'],
+                value: phone,
                 callBack: ({ rejected, resolved }) => {
                     if(rejected){
                         callBack({ rejected: true, resolved: undefined })
@@ -61,26 +67,40 @@ export const Service = {
                         const { code } = resolved;
                         if(code === 200){
                             __User.create({
-                                phone: fillphone({ phone: input['phone'] })
+                                phone: fillphone({ phone })
                             })
                             .then(_user => {
                                 if(_user instanceof __User){
                                     tokenGenerate({ data: _user && _user['phone'] }, (err, done) => {
                                         if(done){
+                                            // __Extrasinfos.create({
+
+                                            // })
+                                            __Cridentials.create({
+                                                uuiduser: _user && _user['uuid'],
+                                                password: pwd,
+                                                token: done.toString(),
+                                                lastlogin: momentNow()
+                                            })
+                                            .then(_C => {})
+                                            .catch(_E => {})
                                             return callBack(ResponseInterne({ status: 200, body: { ..._user.toJSON(), token: done } }))
                                         }else{
                                             return callBack(ResponseInterne({ status: 400, body: {} }))
                                         }
                                     })
                                 }else{
-                                    callBack({ rejected: true, resolved: undefined })
+                                    callBack(ResponseInterne({ status: 503, body: _user }))
                                 }
                             })
                             .catch(err => {
-                                callBack({ rejected: err, resolved: undefined })
+                                console.log('====================================');
+                                console.log(" Catch Seq", err);
+                                console.log('====================================');
+                                callBack(ResponseInterne({ status: 500, body: err }))
                             })
                         }else{
-                            callBack({ rejected: undefined, resolved: { resolved, rejected } })
+                            callBack(ResponseInterne({ status: 500, body: "Error occured" }))
                         }
                     }
                 }
