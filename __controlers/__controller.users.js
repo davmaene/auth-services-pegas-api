@@ -20,8 +20,8 @@ export const controllerUser = {
     },
 
     onSignup: async (req, res, next) => {
-        const { phone, email } = req.body;
-        if(!phone) return Response({ res, status: 401, body: "This request must have at leats phone number or email !" })
+        const { phone, password, email } = req.body;
+        if(!phone || !password) return Response({ res, status: 401, body: "This request must have at leats phone number or email !" })
         Service.onRegister({
             input: { phone },
             callBack: (output) => {
