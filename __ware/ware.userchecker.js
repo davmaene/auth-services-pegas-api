@@ -1,6 +1,7 @@
 import { __User } from "../__models/model.user.js"
 
 export const Checker = {
+    
     checkIfUserExist: ({ key, value, callBack }) => {
         try {
             __User.findOne({

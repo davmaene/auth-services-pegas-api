@@ -26,5 +26,14 @@ export const controllerUser = {
             input: { phone, password },
             callBack: (output) => Response({ res, ...output })
         })
+    },
+
+    onVerify: async (req, res, next) => {
+        const { code, uuid } = req.body;
+        if(!code || !uuid) return Response({ res, status: 401, body: "This request must have at least code and uuid" })
+        Service.onVerify({
+            input: { code, uuid },
+            callBack: (output) => Response({ res, ...output })
+        })
     }
 }

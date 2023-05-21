@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/davmaene/auth-services-pegas-api#readme",
   "dependencies": {
+    "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "console-to-slack": "^1.1.0",
     "cookie-parser": "^1.4.6",

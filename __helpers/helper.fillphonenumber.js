@@ -8,3 +8,22 @@ export const fillphone = ({ phone }) => {
         default: return String(`0${phone}`);
     }
 }
+
+export const completeCodeCountryToPhoneNumber = ({ phone }) => {
+    phone = phone ? phone.toString() : '0';
+    const cdcode = '243'
+    switch (phone.charAt(0)) {
+        case '0':
+            return String(`${cdcode}${phone.substring(1)}`);
+            break;
+        case '+':
+            return String(`${cdcode}${phone.substring(4)}`);
+            break;
+        case '2':
+            return String(`${cdcode}${phone.substring(3)}`);
+            break;
+        default:
+            return String(`${cdcode}${phone.substring(1)}`);
+            break;
+    }
+}

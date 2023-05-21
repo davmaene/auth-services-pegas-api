@@ -10,6 +10,10 @@ import { __Extrasinfos } from "../__models/mode.extrasinfos.js";
 import { __Cridentials } from "../__models/model.cridentials.js";
 import { hashPWD } from "../__helpers/helper.password.js";
 import { momentNow } from "../__helpers/helper.moment.js";
+import { randomLongNumber } from "../__helpers/helper.random.js";
+import { Configs } from "../__configs/configs.config.js";
+import { SMS } from "./service.sms.js";
+import { contentMessages } from "../__helpers/helper.outputmessages.js";
 
 export const Service = {
 
@@ -89,47 +93,69 @@ export const Service = {
             Checker.checkIfUserExist({ 
                 key: 'phone',
                 value: phone,
-                callBack: ({ rejected, resolved }) => {
+                callBack: async ({ rejected, resolved }) => {
                     if(rejected){
                         callBack({ rejected: true, resolved: undefined })
                     }else{
                         const { code } = resolved;
+                        const t = await Configs.transaction()
                         if(code === 200){
-                            __User.create({
+                            await __User.create({
                                 phone: fillphone({ phone })
-                            })
+                            },{ transaction: t })
                             .then(_user => {
                                 if(_user instanceof __User){
+                                    const code = randomLongNumber({ length: 6 });
                                     tokenGenerate({ data: _user && _user['phone'] }, (err, done) => {
                                         if(done){
+
                                             // __Extrasinfos.create({
 
                                             // })
+
                                             __Cridentials.create({
                                                 uuiduser: _user && _user['uuid'],
                                                 password: pwd,
+                                                code,
                                                 token: done.toString(),
                                                 lastlogin: momentNow()
+                                            }, { transaction: t })
+                                            .then(_C => {
+                                                if(_C instanceof __Cridentials){
+                                                    const {content } = contentMessages['signup'];
+                                                    SMS.onSendSMS({ to: fillphone({ phone }), content: `${content} votre code vérification est ${code}`, cb: (err, done) => {
+                                                        console.log('====================================');
+                                                        console.log(err);
+                                                        console.log('====================================');
+                                                    }})
+                                                    t.commit()
+                                                    return callBack(ResponseInterne({ status: 200, body: { ..._user.toJSON(), token: done } }))
+                                                }else{
+                                                    t.rollback()
+                                                    return callBack(ResponseInterne({ status: 400, body: {} }))
+                                                }
                                             })
-                                            .then(_C => {})
-                                            .catch(_E => {})
-                                            return callBack(ResponseInterne({ status: 200, body: { ..._user.toJSON(), token: done } }))
+                                            .catch(_E => {
+                                                t.rollback()
+                                                return callBack(ResponseInterne({ status: 400, body: {} }))
+                                            })
+
                                         }else{
+                                            t.rollback()
                                             return callBack(ResponseInterne({ status: 400, body: {} }))
                                         }
                                     })
                                 }else{
-                                    callBack(ResponseInterne({ status: 503, body: _user }))
+                                    t.rollback()
+                                    return callBack(ResponseInterne({ status: 503, body: _user }))
                                 }
                             })
                             .catch(err => {
-                                console.log('====================================');
-                                console.log(" Catch Seq", err);
-                                console.log('====================================');
-                                callBack(ResponseInterne({ status: 500, body: err }))
+                                t.rollback()
+                                return callBack(ResponseInterne({ status: 500, body: err }))
                             })
                         }else{
-                            callBack(ResponseInterne({ status: code, body: "Error occured" }))
+                            return callBack(ResponseInterne({ status: code, body: "Error occured" }))
                         }
                     }
                 }
@@ -176,7 +202,10 @@ export const Service = {
 
                     if(verified === 0) return callBack(ResponseInterne({ status: 245, body: _user }));
                     else{
-
+                        console.log('====================================');
+                        console.log(_user);
+                        console.log('====================================');
+                        return false
                         _user.update({
                             verified: 1
                         })
