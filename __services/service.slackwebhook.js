@@ -1,5 +1,3 @@
-// https://hooks.slack.com/services/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
-import consoleToSlack from 'console-to-slack';
 import axios from 'axios';
 import dotenv from 'dotenv';
 
@@ -24,9 +22,9 @@ var options = {
 	}
 }
 
-export const conoleToSlackService =  async ({ callBack }) => {
+export const conoleToSlackService =  async ({ text, callBack }) => {
     const url = 'https://hooks.slack.com/services/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';
-    const data = JSON.stringify({ text: "Hello Wordl !" })
+    const data = JSON.stringify({ text })
     await axios({
         url,
         method: "POST",

@@ -20,8 +20,6 @@ export const Service = {
 
     onLogin: async ({ input, callBack }) => {
         const { phone, password } = input;
-        conoleToSlackService({ callBack: ({error, done}) => {} })
-
         try {
 
             __User.hasOne(__Cridentials, { foreignKey: "uuiduser" });

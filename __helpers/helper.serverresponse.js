@@ -1,9 +1,13 @@
+import { conoleToSlackService } from "../__services/service.slackwebhook.js";
+
 export const Response = ({ res, status, body }) => {
     if(1 && res && status){
         const sts = parseInt(status);
+        let text = "";
         switch(sts){
             
             case 200:
+            text = "Success execution"
             res.status(200).json({
                 status: 200,
                 message: "Success execution",
@@ -123,6 +127,13 @@ export const Response = ({ res, status, body }) => {
             })
             break;
         }
+
+        conoleToSlackService({ 
+            text: JSON.stringify(body), 
+            callBack: ({error, done}) => {
+
+            } 
+        });
     }else{
         res.status(222).json({
             status: 222,
