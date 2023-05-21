@@ -18,6 +18,7 @@ export const Service = {
         try {
             __User.findOne({
                 where: {
+                    status: 1,
                     [Op.or]: [
                         { phone: fillphone({ phone }) },
                         { email: phone.toString().toLowerCase() }
