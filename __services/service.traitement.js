@@ -9,7 +9,7 @@ import { Checker } from "../__ware/ware.userchecker.js";
 import { __Extrasinfos } from "../__models/mode.extrasinfos.js";
 import { __Cridentials } from "../__models/model.cridentials.js";
 import { hashPWD } from "../__helpers/helper.password.js";
-import { momentNow } from "../__helpers/helper.moment.js";
+import { momentNow, now } from "../__helpers/helper.moment.js";
 import { randomLongNumber } from "../__helpers/helper.random.js";
 import { Configs } from "../__configs/configs.config.js";
 import { SMS } from "./service.sms.js";
@@ -63,7 +63,25 @@ export const Service = {
                                 tokenGenerate({ data: _user && _user['phone'] }, (err, done) => {
                                     if(done){
                                         delete _user['__tbl_pegas_cridential'];
-                                        return callBack(ResponseInterne({ status: 200, body: { token: done, ..._user } }))
+                                        __Cridentials.update(
+                                            {
+                                                verified: 1,
+                                                lastlogin: now()
+                                            },
+                                            {
+                                                where: {
+                                                    uuiduser: _user['uuid']
+                                                }
+                                            }
+                                        )
+                                        .then(_V => {
+                                            delete _user['__tbl_pegas_cridential'];
+                                            return callBack(ResponseInterne({ status: 200, body: { token: done, ..._user } }))
+                                        })
+                                        .catch(E => {
+                                            loggerSystemCrached({ message: JSON.stringify(E), title: "Server crached on verify account" })
+                                            return callBack(ResponseInterne({ status: 400, body: {} })); 
+                                        })
                                     }else{
                                         return callBack(ResponseInterne({ status: 400, body: {} }))
                                     }
@@ -117,7 +135,7 @@ export const Service = {
                                                 password: pwd,
                                                 code,
                                                 token: done.toString(),
-                                                lastlogin: momentNow()
+                                                lastlogin: now()
                                             }, { transaction: t })
                                             .then(_C => {
                                                 if(_C instanceof __Cridentials){
@@ -200,7 +218,7 @@ export const Service = {
                             __Cridentials.update(
                                 {
                                     verified: 1,
-                                    lastlogin: momentNow()
+                                    lastlogin: now()
                                 },
                                 {
                                     where: {

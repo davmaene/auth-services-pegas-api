@@ -3,4 +3,5 @@ moment.locale("fr");
 moment().startOf("day");
 
 export const momentNow = () => moment().format("L");
+export const now = () => moment().format("L, h:mm:ss a");
 export const momentNowInUnix = () => moment().unix();
