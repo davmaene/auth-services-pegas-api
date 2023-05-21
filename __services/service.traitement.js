@@ -15,7 +15,18 @@ export const Service = {
 
     onLogin: async ({ input, callBack }) => {
         const { phone, password } = input;
+
         try {
+
+            __User.hasOne(__Cridentials, { foreignKey: "uuiduser" });
+            __Cridentials.belongsTo(__User,  {
+                as: 'Cridentials',
+                foreignKey: {
+                    name: 'uuiduser',
+                    // allowNull: false
+                }
+            });
+
             __User.findOne({
                 where: {
                     status: 1,
@@ -23,13 +34,29 @@ export const Service = {
                         { phone: fillphone({ phone }) },
                         { email: phone.toString().toLowerCase() }
                     ]
-                }
+                },
+                include: [
+                    {
+                        model: __Cridentials,
+                        required: true,
+                        where: {
+                            status: 1
+                        }
+                    }
+                ]
             })
             .then(_user => {
                 if(_user instanceof __User){
-                    comparePWD({ plaintext: password, hashedtext: _user && _user['password'] }, (err, done) => {
+                    
+                    _user = _user.toJSON();
+                    const _cridentials = _user && _user['__tbl_pegas_cridential'];
+                    const { verified } = _user;
+
+                    comparePWD({ 
+                        plaintext: password, 
+                        hashedtext: ( _cridentials && _cridentials['password'] ) ?? (process.env.APPESCAPESTRING) 
+                    }, (err, done) => {
                         if(done){
-                            const { verified } = _user.toJSON();
                             if(verified === 1){
                                 tokenGenerate({ data: _user && _user['phone'] }, (err, done) => {
                                     if(done){

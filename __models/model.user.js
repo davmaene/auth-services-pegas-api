@@ -11,7 +11,8 @@ export const __User = Configs.define('__tbl_pegas_users', {
     uuid: {
         type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: uuid
+        defaultValue: uuid,
+        primaryKey: true
     },
     fsname: {
         type: Sequelize.STRING,

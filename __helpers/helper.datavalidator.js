@@ -66,12 +66,12 @@ export const convertStringIntoArray = ({ chaine }) => {
 export const UserSchemaValidator = ({object, cb}) => {
     const User = Joi.object({
         phone: Joi.string()
-        .alphanum()
+        // .alphanum()
         .min(3)
         .max(30)
         .required(),
         password: Joi.string()
-        .alphanum()
+        // .alphanum()
         .min(3)
         .max(30)
         .required()

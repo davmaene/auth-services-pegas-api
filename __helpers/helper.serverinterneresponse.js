@@ -101,7 +101,7 @@ export const ResponseInterne = ({ status, body }) => {
             
             default: 
             return({
-                status: 222,
+                status: 224,
                 message: "unknown internal server occured on this server | please contact + 243 970 284 772 if the problem persists",
                 body: []
             })
@@ -109,7 +109,7 @@ export const ResponseInterne = ({ status, body }) => {
         }
     }else{
         return({
-            status: 222,
+            status: 224,
             message: "missing params to the request ",
             body: "case where missing `res` or `status` object in switch case"
         });
