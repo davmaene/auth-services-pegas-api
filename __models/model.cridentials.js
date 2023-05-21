@@ -3,7 +3,7 @@ import { Configs } from '../__configs/configs.config.js';
 import dotenv from 'dotenv';
 import { momentNow } from '../__helpers/helper.moment.js';
 import { momentNowInUnix } from '../__helpers/helper.moment.js';
-import { nullUuid } from '../__helpers/helper.uuid.js';
+import { nullUuid, uuid } from '../__helpers/helper.uuid.js';
 
 dotenv.config()
 
@@ -11,7 +11,7 @@ export const __Cridentials = Configs.define('__tbl_pegas_cridentials', {
     uuid: {
         type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: process.env.APPESCAPESTRING
+        defaultValue: uuid
     },
     uuiduser: {
         type: Sequelize.STRING,

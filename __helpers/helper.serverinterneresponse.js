@@ -1,4 +1,5 @@
 export const ResponseInterne = ({ status, body }) => {
+    console.log("Body ====================> ", body);
     if(1 && status){
         const sts = parseInt(status);
         switch(sts){

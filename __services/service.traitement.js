@@ -24,10 +24,8 @@ export const Service = {
 
             __User.hasOne(__Cridentials, { foreignKey: "uuiduser" });
             __Cridentials.belongsTo(__User,  {
-                as: 'Cridentials',
                 foreignKey: {
                     name: 'uuiduser',
-                    // allowNull: false
                 }
             });
 
@@ -54,19 +52,20 @@ export const Service = {
 
                     _user = _user.toJSON();
                     const _cridentials = _user && _user['__tbl_pegas_cridential'];
-                    const { verified } = _user;
+                    const { verified } = _cridentials;
 
                     comparePWD({ 
                         plaintext: password, 
                         hashedtext: ( _cridentials && _cridentials['password'] ) ?? (process.env.APPESCAPESTRING) 
                     }, (err, done) => {
                         if(done){
-                            if(verified === 1){
+                            if(parseInt(verified) === 1){
                                 tokenGenerate({ data: _user && _user['phone'] }, (err, done) => {
                                     if(done){
-                                        return callBack(ResponseInterne({ status: 200, body: { ..._user.toJSON(), token: done } }))
+                                        delete _user['__tbl_pegas_cridential'];
+                                        return callBack(ResponseInterne({ status: 200, body: { token: done, ..._user } }))
                                     }else{
-                                        return callBack(ResponseInterne({ status: 400, data: {} }))
+                                        return callBack(ResponseInterne({ status: 400, body: {} }))
                                     }
                                 })
                             }else{
