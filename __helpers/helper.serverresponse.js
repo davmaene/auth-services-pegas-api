@@ -27,6 +27,14 @@ export const Response = ({ res, status, body }) => {
             });
             break;
 
+            case 246:
+            res.status(246).json({
+                status: 246,
+                message: "Verification faild failed `code` or `uuid` is incorrect !",
+                data: body ? body : {}
+            });
+            break;
+
             case 244:
             res.status(244).json({
                 status: 244,

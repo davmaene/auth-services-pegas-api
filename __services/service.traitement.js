@@ -169,7 +169,6 @@ export const Service = {
 
             __User.hasOne(__Cridentials, { foreignKey: "uuiduser" });
             __Cridentials.belongsTo(__User,  {
-                as: 'Cridentials',
                 foreignKey: {
                     name: 'uuiduser',
                     // allowNull: false
@@ -180,7 +179,6 @@ export const Service = {
                 where: {
                     uuid,
                     status: 1,
-                    // verified: 1
                 },
                 include: [
                     {
@@ -188,7 +186,7 @@ export const Service = {
                         required: true,
                         where: {
                             status: 1,
-                            code
+                            // code
                         }
                     }
                 ]
@@ -199,17 +197,16 @@ export const Service = {
                     _user = _user.toJSON();
                     const _cridentials = _user && _user['__tbl_pegas_cridential'];
                     const { verified } = _user;
+                    const codeStore = _cridentials['code'];
 
                     if(verified === 0) return callBack(ResponseInterne({ status: 245, body: _user }));
                     else{
-                        console.log('====================================');
-                        console.log(_user);
-                        console.log('====================================');
-                        return false
-                        _user.update({
-                            verified: 1
-                        })
 
+                        if(code.toString() === codeStore.toString()){
+                            return callBack(ResponseInterne({ status: 200, body: _user }))
+                        }else{
+                            return callBack(ResponseInterne({ status: 246, body: {} }))
+                        }
                     }
                 }else{
                     return callBack(ResponseInterne({ status: 244, body: {} })); 
@@ -217,7 +214,7 @@ export const Service = {
             })
             .catch(err => {
                 loggerSystemCrached({ message: JSON.stringify(err), title: "Server crached on verify account" })
-                return callBack(ResponseInterne({ status: 500, body: err }))
+                return callBack(ResponseInterne({ status: 503, body: err }))
             })
         } catch (error) {
             loggerSystemCrached({ message: JSON.stringify(error), title: "Server crached on verify account" })

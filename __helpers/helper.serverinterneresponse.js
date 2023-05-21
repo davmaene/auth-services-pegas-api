@@ -27,6 +27,14 @@ export const ResponseInterne = ({ status, body }) => {
             });
             break;
 
+            case 246:
+                return({
+                    status: 246,
+                    message: "Verification faild failed `code` or `uuid` is incorrect !",
+                    body: body ? body : {}
+                });
+                break;
+
             case 244:
             return({
                 status: 244,
