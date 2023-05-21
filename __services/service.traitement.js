@@ -123,11 +123,7 @@ export const Service = {
                                             .then(_C => {
                                                 if(_C instanceof __Cridentials){
                                                     const {content } = contentMessages['signup'];
-                                                    SMS.onSendSMS({ to: fillphone({ phone }), content: `${content} votre code vérification est ${code}`, cb: (err, done) => {
-                                                        console.log('====================================');
-                                                        console.log(err);
-                                                        console.log('====================================');
-                                                    }})
+                                                    SMS.onSendSMS({ to: fillphone({ phone }), content: `${content} votre code vérification est ${code}`, cb: (err, done) => { }})
                                                     t.commit()
                                                     return callBack(ResponseInterne({ status: 200, body: { ..._user.toJSON(), token: done } }))
                                                 }else{
@@ -185,8 +181,7 @@ export const Service = {
                         model: __Cridentials,
                         required: true,
                         where: {
-                            status: 1,
-                            // code
+                            status: 1
                         }
                     }
                 ]
@@ -194,25 +189,44 @@ export const Service = {
             .then(_user => {
                 if(_user instanceof __User){
 
-                    _user = _user.toJSON();
-                    const _cridentials = _user && _user['__tbl_pegas_cridential'];
-                    const { verified } = _user;
+                    const user = _user.toJSON();
+                    const _cridentials = user && user['__tbl_pegas_cridential'];
+                    const { verified } = _cridentials;
                     const codeStore = _cridentials['code'];
 
-                    if(verified === 0) return callBack(ResponseInterne({ status: 245, body: _user }));
+                    if(verified === 1) return callBack(ResponseInterne({ status: 245, body: {} }));
                     else{
 
                         if(code.toString() === codeStore.toString()){
-                            return callBack(ResponseInterne({ status: 200, body: _user }))
+                            __Cridentials.update(
+                                {
+                                    verified: 1,
+                                    lastlogin: momentNow()
+                                },
+                                {
+                                    where: {
+                                        uuiduser: uuid
+                                    }
+                                }
+                            )
+                            .then(_V => {
+                                delete user['__tbl_pegas_cridential'];
+                                return callBack(ResponseInterne({ status: 200, body: user }))
+                            })
+                            .catch(E => {
+                                loggerSystemCrached({ message: JSON.stringify(E), title: "Server crached on verify account" })
+                                return callBack(ResponseInterne({ status: 400, body: {} })); 
+                            })
                         }else{
                             return callBack(ResponseInterne({ status: 246, body: {} }))
                         }
                     }
                 }else{
-                    return callBack(ResponseInterne({ status: 244, body: {} })); 
+                    return callBack(ResponseInterne({ status: 203, body: {} })); 
                 }
             })
             .catch(err => {
+                console.log(err);
                 loggerSystemCrached({ message: JSON.stringify(err), title: "Server crached on verify account" })
                 return callBack(ResponseInterne({ status: 503, body: err }))
             })

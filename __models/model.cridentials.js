@@ -38,6 +38,11 @@ export const __Cridentials = Configs.define('__tbl_pegas_cridentials', {
         allowNull: false,
         defaultValue: process.env.APPESCAPESTRING
     },
+    verified: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+    },
     status: {
         type: Sequelize.INTEGER,
         allowNull: false,
