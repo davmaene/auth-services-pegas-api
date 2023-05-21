@@ -140,22 +140,47 @@ export const Service = {
     onVerify: async ({ input, callBack }) => {
         const { uuid, code } = input;
         try {
+
+            __User.hasOne(__Cridentials, { foreignKey: "uuiduser" });
+            __Cridentials.belongsTo(__User,  {
+                as: 'Cridentials',
+                foreignKey: {
+                    name: 'uuiduser',
+                    // allowNull: false
+                }
+            });
+
             __User.findOne({
                 where: {
                     uuid,
                     status: 1,
                     // verified: 1
-                }
+                },
+                include: [
+                    {
+                        model: __Cridentials,
+                        required: true,
+                        where: {
+                            status: 1,
+                            code
+                        }
+                    }
+                ]
             })
             .then(_user => {
                 if(_user instanceof __User){
+
                     _user = _user.toJSON();
                     const _cridentials = _user && _user['__tbl_pegas_cridential'];
                     const { verified } = _user;
 
-                    if(verified) return callBack(ResponseInterne({ status: 245, body: _user }));
+                    if(verified === 0) return callBack(ResponseInterne({ status: 245, body: _user }));
                     else{
-                        
+
+                        _user.update({
+                            verified: 1
+                        })
+
                     }
                 }else{
                     return callBack(ResponseInterne({ status: 244, body: {} })); 

@@ -23,6 +23,11 @@ export const __Cridentials = Configs.define('__tbl_pegas_cridentials', {
         allowNull: false,
         defaultValue: process.env.APPESCAPESTRING
     },
+    code: {
+        type: Sequelize.TEXT,
+        allowNull: false,
+        defaultValue: process.env.APPESCAPESTRING
+    },
     token: {
         type: Sequelize.TEXT,
         allowNull: false,

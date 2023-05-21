@@ -1,5 +1,5 @@
 {
-  "name": "package.json",
+  "name": "Pegas - Auth - Service",
   "version": "1.0.1",
   "type": "module",
   "description": "Simple service web for authentification ",
