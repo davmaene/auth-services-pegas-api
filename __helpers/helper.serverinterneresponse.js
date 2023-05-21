@@ -35,6 +35,14 @@ export const ResponseInterne = ({ status, body }) => {
             });
             break;
 
+            case 245:
+                return({
+                    status: 245,
+                    message: "Account already activated !",
+                    body: body ? body : {}
+                });
+                break;
+
             case 404:
             return({
                 status: 404,

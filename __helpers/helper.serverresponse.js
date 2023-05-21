@@ -35,6 +35,14 @@ export const Response = ({ res, status, body }) => {
             });
             break;
 
+            case 245:
+                res.status(245).json({
+                    status: 245,
+                    message: "Account already activated !",
+                    data: body ? body : {}
+                });
+                break;
+
             case 404:
             res.status(404).json({
                 status: 404,

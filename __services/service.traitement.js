@@ -47,7 +47,7 @@ export const Service = {
             })
             .then(_user => {
                 if(_user instanceof __User){
-                    
+
                     _user = _user.toJSON();
                     const _cridentials = _user && _user['__tbl_pegas_cridential'];
                     const { verified } = _user;
@@ -134,6 +134,40 @@ export const Service = {
                     }
                 }
             })
+        }
+    },
+
+    onVerify: async ({ input, callBack }) => {
+        const { uuid, code } = input;
+        try {
+            __User.findOne({
+                where: {
+                    uuid,
+                    status: 1,
+                    // verified: 1
+                }
+            })
+            .then(_user => {
+                if(_user instanceof __User){
+                    _user = _user.toJSON();
+                    const _cridentials = _user && _user['__tbl_pegas_cridential'];
+                    const { verified } = _user;
+
+                    if(verified) return callBack(ResponseInterne({ status: 245, body: _user }));
+                    else{
+                        
+                    }
+                }else{
+                    return callBack(ResponseInterne({ status: 244, body: {} })); 
+                }
+            })
+            .catch(err => {
+                loggerSystemCrached({ message: JSON.stringify(err), title: "Server crached on verify account" })
+                return callBack(ResponseInterne({ status: 500, body: err }))
+            })
+        } catch (error) {
+            loggerSystemCrached({ message: JSON.stringify(error), title: "Server crached on verify account" })
+            return callBack(ResponseInterne({ status: 500, body: error }))
         }
     }
 }
