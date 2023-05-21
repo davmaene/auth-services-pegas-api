@@ -183,14 +183,12 @@ export const Service = {
             __User.hasOne(__Cridentials, { foreignKey: "uuiduser" });
             __Cridentials.belongsTo(__User,  {
                 foreignKey: {
-                    name: 'uuiduser',
-                    // allowNull: false
+                    name: 'uuiduser'
                 }
             });
 
             __User.findOne({
-                where: {
-                    uuid,
+                where: {                   uuid,
                     status: 1,
                 },
                 include: [
