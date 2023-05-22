@@ -1,4 +1,4 @@
-import { conoleToSlackService } from "../__services/service.slackwebhook.js";
+import { conoleToSlackWebhook } from "../__services/service.slackwebhook.js";
 
 export const Response = ({ res, status, body }) => {
     if(1 && res && status){
@@ -128,12 +128,15 @@ export const Response = ({ res, status, body }) => {
             break;
         }
 
-        conoleToSlackService({ 
+        conoleToSlackWebhook({ 
             text: JSON.stringify(body), 
             callBack: ({error, done}) => {
-
+                console.log('====================================');
+                console.log(error);
+                console.log('====================================');
             } 
         });
+
     }else{
         res.status(222).json({
             status: 222,

@@ -14,7 +14,6 @@ import { randomLongNumber } from "../__helpers/helper.random.js";
 import { Configs } from "../__configs/configs.config.js";
 import { SMS } from "./service.sms.js";
 import { contentMessages } from "../__helpers/helper.outputmessages.js";
-import { conoleToSlackService } from "./service.slackwebhook.js";
 
 export const Service = {
 

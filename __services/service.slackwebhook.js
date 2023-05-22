@@ -22,7 +22,7 @@ var options = {
 	}
 }
 
-export const conoleToSlackService =  async ({ text, callBack }) => {
+export const conoleToSlackWebhook =  async ({ text, callBack }) => {
     const url = 'https://hooks.slack.com/services/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';
     const data = JSON.stringify({ text })
     await axios({
