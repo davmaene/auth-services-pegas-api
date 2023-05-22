@@ -130,11 +130,7 @@ export const Response = ({ res, status, body }) => {
 
         conoleToSlackWebhook({ 
             text: JSON.stringify(body), 
-            callBack: ({error, done}) => {
-                console.log('====================================');
-                console.log(error);
-                console.log('====================================');
-            } 
+            callBack: ({error, done}) => { } 
         });
 
     }else{
