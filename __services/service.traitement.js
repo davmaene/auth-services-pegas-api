@@ -14,6 +14,7 @@ import { randomLongNumber } from "../__helpers/helper.random.js";
 import { Configs } from "../__configs/configs.config.js";
 import { SMS } from "./service.sms.js";
 import { contentMessages } from "../__helpers/helper.outputmessages.js";
+import { uuid } from "../__helpers/helper.uuid.js";
 
 export const Service = {
 
@@ -28,6 +29,13 @@ export const Service = {
                 }
             });
 
+            __User.hasOne(__Extrasinfos, { foreignKey: "uuiduser" });
+            __Extrasinfos.belongsTo(__User,  {
+                foreignKey: {
+                    name: 'uuiduser'
+                }
+            });
+
             __User.findOne({
                 where: {
                     status: 1,
@@ -39,6 +47,13 @@ export const Service = {
                 include: [
                     {
                         model: __Cridentials,
+                        required: true,
+                        where: {
+                            status: 1
+                        }
+                    },
+                    {
+                        model: __Extrasinfos,
                         required: true,
                         where: {
                             status: 1
@@ -113,24 +128,22 @@ export const Service = {
                     value: phone,
                     callBack: async ({ rejected, resolved }) => {
                         if(rejected){
-                            t.rollback()
                             return callBack(ResponseInterne({ status: 400, body: {} }))
                         }else{
+
                             const { code } = resolved;
-                            const t = await Configs.transaction()
+                            const t = await Configs.transaction();
+
                             if(code === 200){
                                 await __User.create({
-                                    phone: fillphone({ phone })
+                                    phone: fillphone({ phone }),
+                                    uuid
                                 },{ transaction: t })
                                 .then(_user => {
                                     if(_user instanceof __User){
                                         const code = randomLongNumber({ length: 6 });
                                         tokenGenerate({ data: _user && _user['phone'] }, (err, done) => {
                                             if(done){
-    
-                                                // __Extrasinfos.create({
-    
-                                                // })
     
                                                 __Cridentials.create({
                                                     uuiduser: _user && _user['uuid'],
@@ -141,10 +154,25 @@ export const Service = {
                                                 }, { transaction: t })
                                                 .then(_C => {
                                                     if(_C instanceof __Cridentials){
-                                                        const {content } = contentMessages['signup'];
-                                                        SMS.onSendSMS({ to: fillphone({ phone }), content: `${content} votre code vérification est ${code}`, cb: (err, done) => { }})
-                                                        t.commit()
-                                                        return callBack(ResponseInterne({ status: 200, body: { ..._user.toJSON(), token: done } }))
+                                                        __Extrasinfos.create({
+                                                            uuid: uuid,
+                                                            uuiduser: _user && _user['uuid'],
+                                                        })
+                                                        .then(_E => {
+                                                            if(_E instanceof __Extrasinfos){
+                                                                const {content } = contentMessages['signup'];
+                                                                SMS.onSendSMS({ to: fillphone({ phone }), content: `${content} votre code vérification est ${code}`, cb: (err, done) => { }})
+                                                                t.commit()
+                                                                return callBack(ResponseInterne({ status: 200, body: { ..._user.toJSON(), token: done } }))
+                                                            }else{
+                                                                t.rollback()
+                                                                return callBack(ResponseInterne({ status: 400, body: {} }))
+                                                            }
+                                                        })
+                                                        .catch(_error => {
+                                                            t.rollback()
+                                                            return callBack(ResponseInterne({ status: 400, body: {} }))
+                                                        })
                                                     }else{
                                                         t.rollback()
                                                         return callBack(ResponseInterne({ status: 400, body: {} }))
@@ -259,6 +287,107 @@ export const Service = {
     },
 
     onFillprofile: async ({ input, callBack }) => {
-        
+        const {
+            uuid,
+            fsname,
+            lsname,
+            email,
+            country,
+            countrycode,
+            stateprovince,
+            city
+        } = input;
+        try {
+
+            __User.hasOne(__Cridentials, { foreignKey: "uuiduser" });
+            __Cridentials.belongsTo(__User,  {
+                foreignKey: {
+                    name: 'uuiduser'
+                }
+            });
+
+            __User.hasOne(__Extrasinfos, { foreignKey: "uuiduser" });
+            __Extrasinfos.belongsTo(__User,  {
+                foreignKey: {
+                    name: 'uuiduser'
+                }
+            });
+
+            const t = await Configs.transaction()
+
+            __User.findOne({
+                where: { 
+                    uuid,
+                    status: 1,
+                },
+                include: [
+                    {
+                        model: __Cridentials,
+                        required: true,
+                        where: {
+                            status: 1
+                        }
+                    },
+                    {
+                        model: __Extrasinfos,
+                        required: true,
+                        where: {
+                            status: 1
+                        }
+                    }
+                ]
+            }, { transaction: t })
+            .then(_user => {
+                if(_user instanceof __User){
+                    _user.update({
+                        fsname,
+                        lsname,
+                        email,
+                        updatedon: momentNow()
+                    }, { transaction: t })
+                    .then(_updatedUser => {
+
+                        __Extrasinfos.update({
+                            uuiduser: uuid,
+                            country: country ? country.toLowerCase() : process.env.APPESCAPESTRING,
+                            countrycode: countrycode ? countrycode.toLowerCase() : process.env.APPESCAPESTRING,
+                            stateprovince: stateprovince ? stateprovince.toLowerCase() : process.env.APPESCAPESTRING,
+                            city: city ? city.toLowerCase() : process.env.APPESCAPESTRING,
+                            updatedon: momentNow()
+                        }, { where: { uuiduser: uuid } },{ transaction: t })
+                        .then(_createdExtras => {
+                            const __user = _user.toJSON()
+                            delete __user['__tbl_pegas_cridential'];
+                            t.commit()
+                            return callBack(ResponseInterne({ status: 200, body: { ...__user } }))
+                        })
+                        .catch(_error => {
+                            t.rollback()
+                            loggerSystemCrached({ message: (_error).toString(), title: "Server crached on fill profile" })
+                            return callBack(ResponseInterne({ status: 500, body: _error }))
+                        })
+                    })
+                    .catch(_erroronupdate => {
+                        t.rollback()
+                        loggerSystemCrached({ message: (_erroronupdate).toString(), title: "Server crached on fill profile" })
+                        return callBack(ResponseInterne({ status: 500, body: _user }))
+                    })
+
+                }else{
+                    t.rollback()
+                    loggerSystemCrached({ message: "", title: "Server crached on fill profile" })
+                    return callBack(ResponseInterne({ status: 404, body: _user }))
+                }
+            })
+            .catch(_error => {
+                t.rollback()
+                loggerSystemCrached({ message: (_error).toString(), title: "Server crached on fill profile" })
+                return callBack(ResponseInterne({ status: 503, body: _error }))
+            })
+        } catch (error) {
+            t.rollback()
+            loggerSystemCrached({ message: (error).toString(), title: "Server crached on fill profile" })
+            return callBack(ResponseInterne({ status: 500, body: error }))
+        }
     }
 }

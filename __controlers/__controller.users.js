@@ -52,7 +52,19 @@ export const controllerUser = {
         if(!uuid)  return Response({ res, status: 401, body: "This request must have at least uuid !" });
         else{
             try {
-                return Response({ res, status: 200, body: req.body })
+                Service.onFillprofile({
+                    input: {
+                        uuid,
+                        fsname,
+                        lsname,
+                        email,
+                        country,
+                        countrycode,
+                        stateprovince,
+                        city
+                    },
+                    callBack: (output) => Response({ res, ...output })
+                })
             } catch (error) {
                 return Response({ res, status: 500, body: error })
             }
