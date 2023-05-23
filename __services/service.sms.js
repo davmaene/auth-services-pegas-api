@@ -1,5 +1,6 @@
 import { completeCodeCountryToPhoneNumber } from "../__helpers/helper.fillphonenumber.js";
 import axios from 'axios';
+import { loggerSystemCrached } from "../__helpers/helper.logwriterfile.js";
 
 const WithKeccel = async ({ to, content }, cb) => {
     try {
@@ -21,9 +22,11 @@ const WithKeccel = async ({ to, content }, cb) => {
             cb(undefined, sms['data'])
         })
         .catch(er => {
+            loggerSystemCrached({ message: er.toString(), title: "SMS Not Sent to " + to })
             cb(er, undefined)
         })
     } catch (error) {
+        loggerSystemCrached({ message: error.toString(), title: "SMS Not Sent to " + to })
         cb(error, undefined)
     }
 };

@@ -78,7 +78,7 @@ export const Service = {
                                             return callBack(ResponseInterne({ status: 200, body: { token: done, ..._user } }))
                                         })
                                         .catch(E => {
-                                            loggerSystemCrached({ message: JSON.stringify(E), title: "Server crached on verify account" })
+                                            loggerSystemCrached({ message: JSON.stringify(E), title: "Server crached on login account" })
                                             return callBack(ResponseInterne({ status: 400, body: {} })); 
                                         })
                                     }else{
@@ -103,75 +103,82 @@ export const Service = {
     },
 
     onRegister: async ({ input, callBack }) => {
-        if(input && callBack){
-            const { phone, password } = input;
-            const pwd = await hashPWD({ plaintext: password });
-            Checker.checkIfUserExist({ 
-                key: 'phone',
-                value: phone,
-                callBack: async ({ rejected, resolved }) => {
-                    if(rejected){
-                        callBack({ rejected: true, resolved: undefined })
-                    }else{
-                        const { code } = resolved;
-                        const t = await Configs.transaction()
-                        if(code === 200){
-                            await __User.create({
-                                phone: fillphone({ phone })
-                            },{ transaction: t })
-                            .then(_user => {
-                                if(_user instanceof __User){
-                                    const code = randomLongNumber({ length: 6 });
-                                    tokenGenerate({ data: _user && _user['phone'] }, (err, done) => {
-                                        if(done){
 
-                                            // __Extrasinfos.create({
-
-                                            // })
-
-                                            __Cridentials.create({
-                                                uuiduser: _user && _user['uuid'],
-                                                password: pwd,
-                                                code,
-                                                token: done.toString(),
-                                                lastlogin: now()
-                                            }, { transaction: t })
-                                            .then(_C => {
-                                                if(_C instanceof __Cridentials){
-                                                    const {content } = contentMessages['signup'];
-                                                    SMS.onSendSMS({ to: fillphone({ phone }), content: `${content} votre code vérification est ${code}`, cb: (err, done) => { }})
-                                                    t.commit()
-                                                    return callBack(ResponseInterne({ status: 200, body: { ..._user.toJSON(), token: done } }))
-                                                }else{
+        try {
+            if(input && callBack){
+                const { phone, password } = input;
+                const pwd = await hashPWD({ plaintext: password });
+                Checker.checkIfUserExist({ 
+                    key: 'phone',
+                    value: phone,
+                    callBack: async ({ rejected, resolved }) => {
+                        if(rejected){
+                            t.rollback()
+                            return callBack(ResponseInterne({ status: 400, body: {} }))
+                        }else{
+                            const { code } = resolved;
+                            const t = await Configs.transaction()
+                            if(code === 200){
+                                await __User.create({
+                                    phone: fillphone({ phone })
+                                },{ transaction: t })
+                                .then(_user => {
+                                    if(_user instanceof __User){
+                                        const code = randomLongNumber({ length: 6 });
+                                        tokenGenerate({ data: _user && _user['phone'] }, (err, done) => {
+                                            if(done){
+    
+                                                // __Extrasinfos.create({
+    
+                                                // })
+    
+                                                __Cridentials.create({
+                                                    uuiduser: _user && _user['uuid'],
+                                                    password: pwd,
+                                                    code,
+                                                    token: done.toString(),
+                                                    lastlogin: now()
+                                                }, { transaction: t })
+                                                .then(_C => {
+                                                    if(_C instanceof __Cridentials){
+                                                        const {content } = contentMessages['signup'];
+                                                        SMS.onSendSMS({ to: fillphone({ phone }), content: `${content} votre code vérification est ${code}`, cb: (err, done) => { }})
+                                                        t.commit()
+                                                        return callBack(ResponseInterne({ status: 200, body: { ..._user.toJSON(), token: done } }))
+                                                    }else{
+                                                        t.rollback()
+                                                        return callBack(ResponseInterne({ status: 400, body: {} }))
+                                                    }
+                                                })
+                                                .catch(_E => {
                                                     t.rollback()
                                                     return callBack(ResponseInterne({ status: 400, body: {} }))
-                                                }
-                                            })
-                                            .catch(_E => {
+                                                })
+    
+                                            }else{
                                                 t.rollback()
                                                 return callBack(ResponseInterne({ status: 400, body: {} }))
-                                            })
-
-                                        }else{
-                                            t.rollback()
-                                            return callBack(ResponseInterne({ status: 400, body: {} }))
-                                        }
-                                    })
-                                }else{
+                                            }
+                                        })
+                                    }else{
+                                        t.rollback()
+                                        return callBack(ResponseInterne({ status: 503, body: _user }))
+                                    }
+                                })
+                                .catch(err => {
                                     t.rollback()
-                                    return callBack(ResponseInterne({ status: 503, body: _user }))
-                                }
-                            })
-                            .catch(err => {
+                                    return callBack(ResponseInterne({ status: 500, body: err }))
+                                })
+                            }else{
                                 t.rollback()
-                                return callBack(ResponseInterne({ status: 500, body: err }))
-                            })
-                        }else{
-                            return callBack(ResponseInterne({ status: code, body: "Error occured" }))
+                                return callBack(ResponseInterne({ status: code, body: "Phone number already taken !" }))
+                            }
                         }
                     }
-                }
-            })
+                })
+            }
+        } catch (error) {
+            return callBack(ResponseInterne({ status: 500, body: {} }))
         }
     },
 
@@ -187,7 +194,8 @@ export const Service = {
             });
 
             __User.findOne({
-                where: {                   uuid,
+                where: { 
+                    uuid,
                     status: 1,
                 },
                 include: [
