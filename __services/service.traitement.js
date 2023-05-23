@@ -256,5 +256,9 @@ export const Service = {
             loggerSystemCrached({ message: JSON.stringify(error), title: "Server crached on verify account" })
             return callBack(ResponseInterne({ status: 500, body: error }))
         }
+    },
+
+    onFillprofile: async ({ input, callBack }) => {
+        
     }
 }

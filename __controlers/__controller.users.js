@@ -35,5 +35,27 @@ export const controllerUser = {
             input: { code, uuid },
             callBack: (output) => Response({ res, ...output })
         })
+    },
+
+    onFillProfile: async (req, res, next) => {
+        const {
+            uuid,
+            fsname,
+            lsname,
+            email,
+            country,
+            countrycode,
+            stateprovince,
+            city
+        } = req.body;
+
+        if(!uuid)  return Response({ res, status: 401, body: "This request must have at least uuid !" });
+        else{
+            try {
+                return Response({ res, status: 200, body: req.body })
+            } catch (error) {
+                return Response({ res, status: 500, body: error })
+            }
+        }
     }
 }

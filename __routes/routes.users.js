@@ -5,4 +5,5 @@ import { limiter, limiterOnLogin } from '../__ware/ware.ratelimit.js';
 export const __routesusers = express.Router();
 __routesusers.post("/signin", limiterOnLogin, controllerUser.onSignin ) 
 __routesusers.post("/signup", limiter, controllerUser.onSignup ) 
-__routesusers.put("/verify", limiter, controllerUser.onVerify ) 
+__routesusers.put("/verify", limiter, controllerUser.onVerify )
+__routesusers.put("/fillprofile", limiter, controllerUser.onFillProfile )

@@ -46,7 +46,7 @@ const onSendSMS = ({ to, content, cb }) => {
             })
             break;
     }
-}
+};
 
 export const SMS = {
     onSendSMS
