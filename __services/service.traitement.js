@@ -287,6 +287,7 @@ export const Service = {
     },
 
     onFillprofile: async ({ input, callBack }) => {
+        
         const {
             uuid,
             fsname,
@@ -297,6 +298,7 @@ export const Service = {
             stateprovince,
             city
         } = input;
+
         try {
 
             __User.hasOne(__Cridentials, { foreignKey: "uuiduser" });
@@ -365,7 +367,8 @@ export const Service = {
                             t.rollback()
                             loggerSystemCrached({ message: (_error).toString(), title: "Server crached on fill profile" })
                             return callBack(ResponseInterne({ status: 500, body: _error }))
-                        })
+                        });
+                        
                     })
                     .catch(_erroronupdate => {
                         t.rollback()
