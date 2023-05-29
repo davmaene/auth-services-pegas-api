@@ -12,7 +12,7 @@ const WithKeccel = async ({ to, content }, cb) => {
                 "to": completeCodeCountryToPhoneNumber({ phone: to }),
                 "message": content,
                 "from": process.env.SENDERID,
-                "token": "GHPK3A29WFG6Q4K"
+                "token": process.env.TOKENAPIKECCEL
             }
         })
         .then(sms => {
