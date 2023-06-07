@@ -3,14 +3,16 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const { APPDBNAME, APPDBUSERNAME, APPDBPASSWORD, APPDBPORT, APPDBHOSTNAME, APPDBDIALECT } = process.env;
+
 export const Configs = new Sequelize(
-    process.env.APPDBNAME,
-    process.env.APPDBUSERNAME,
-    process.env.APPDBPASSWORD
+    APPDBNAME,
+    APPDBUSERNAME,
+    APPDBPASSWORD
     ,{
-        port: process.env.APPDBPORT,
-        host: process.env.APPDBHOSTNAME,
-        dialect: process.env.APPDBDIALECT || "mysql"
+        port: APPDBPORT,
+        host: APPDBHOSTNAME,
+        dialect: APPDBDIALECT || "mysql"
     }
 );
 
